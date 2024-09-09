@@ -17,7 +17,7 @@ public class DeployAndStartInstance {
           .send()
           .join();
 
-      final ProcessInstanceEvent event = client.newCreateInstanceCommand()
+      final var processStartedEvent = client.newCreateInstanceCommand()
           .bpmnProcessId("send-email")
           .latestVersion()
           .variables(Map.of("message_content", "Hello from the Java get started"))
@@ -25,9 +25,17 @@ public class DeployAndStartInstance {
           .join();
 
       LOG.info(
-          "Started instance for processDefinitionKey='{}', bpmnProcessId='{}', version='{}' with processInstanceKey='{}'",
-          event.getProcessDefinitionKey(), event.getBpmnProcessId(), event.getVersion(),
-          event.getProcessInstanceKey());
+              "Started instance for processDefinitionKey='{}', bpmnProcessId='{}', version='{}' with processInstanceKey='{}'",
+              processStartedEvent.getProcessDefinitionKey(), processStartedEvent.getBpmnProcessId(), processStartedEvent.getVersion(),
+              processStartedEvent.getProcessInstanceKey());
+
+      final var setVariablesResponse = client.newSetVariablesCommand(processStartedEvent.getProcessInstanceKey())
+              .variables(Map.of("message_content", "Hello from the Java get started, with new value"))
+              .send()
+              .join();
+
+      LOG.info("Update variable in instance for processInstanceKey='{}'", processStartedEvent.getProcessInstanceKey());
+
     }
   }
 }

@@ -4,13 +4,12 @@ import io.camunda.zeebe.client.ZeebeClient;
 
 public class ZeebeClientFactory {
 
+  // Local zeebe
   public static ZeebeClient getZeebeClient() {
-    return ZeebeClient.newCloudClientBuilder()
-        .withClusterId("YOUR_CLUSTER_ID")
-        .withClientId("YOUR_CLIENT_ID")
-        .withClientSecret("YOUR_CLIENT_SECRET")
-        .withRegion("bru-2")
-        .build();
+    return ZeebeClient.newClientBuilder()
+            .gatewayAddress("0.0.0.0:26500")
+            .usePlaintext()
+            .build();
   }
 
 }
