@@ -12,7 +12,7 @@ public class DeployAndStartManyInstances {
 
   private static final Logger LOG = LogManager.getLogger(DeployAndStartManyInstances.class);
 
-  private static final Long START_AMOUNT = 10000L;
+  private static final Long START_AMOUNT = 1000L;
 
   public static void main(String[] args) {
     var timeStart = Instant.now();
@@ -26,7 +26,10 @@ public class DeployAndStartManyInstances {
         final var processStartedEvent = client.newCreateInstanceCommand()
                 .bpmnProcessId("send-email")
                 .latestVersion()
-                .variables(Map.of("message_content", "Hello from the Java get started"))
+                .variables(Map.of(
+                        "message_content", "Hello from the Java get started",
+                        "number_val", 12345678
+                ))
                 .send()
                 .join();
 

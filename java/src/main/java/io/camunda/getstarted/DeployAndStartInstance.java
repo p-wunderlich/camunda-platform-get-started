@@ -20,7 +20,10 @@ public class DeployAndStartInstance {
       final var processStartedEvent = client.newCreateInstanceCommand()
           .bpmnProcessId("send-email")
           .latestVersion()
-          .variables(Map.of("message_content", "Hello from the Java get started"))
+          .variables(Map.of(
+                  "message_content", "Hello from the Java get started",
+                  "number_val", 12345678)
+          )
           .send()
           .join();
 
