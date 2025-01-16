@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.Map;
 
 public class DeployAndStartManyInstances {
@@ -23,13 +24,17 @@ public class DeployAndStartManyInstances {
           .join();
 
       for(int i = 0; i < START_AMOUNT; i++) {
+        final var variables = new HashMap<>();
+        variables.put("message_content", "Hello from the Java get started "+i);
+        variables.put("number_val", 12345678+i);
+        variables.put("null_val", null);
+        variables.put("bool_val", true);
+        variables.put("bool_string_val", "true");
+
         final var processStartedEvent = client.newCreateInstanceCommand()
                 .bpmnProcessId("send-email")
                 .latestVersion()
-                .variables(Map.of(
-                        "message_content", "Hello from the Java get started",
-                        "number_val", 12345678
-                ))
+                .variables(variables)
                 .send()
                 .join();
 
