@@ -34,11 +34,14 @@ public class DeployAndStartInstance {
       final var variables = new HashMap<>();
       variables.put("message_content", "Hello from the Java get started");
       variables.put("number_val", 12345678);
-      variables.put("double_string_val", "1234.5678");
+      variables.put("double_val", 1234.5678);
       variables.put("number_string_val", "12345678");
+      variables.put("double_string_val", "1234.5678");
       variables.put("null_val", null);
       variables.put("bool_val", true);
       variables.put("bool_string_val", "true");
+      variables.put("list_val", List.of("list1", "list2"));
+      variables.put("map_val", Map.of("key1", "value1", "key2", "value2"));
       variables.put("json_val", objectMapper.valueToTree(MyJsonObject.builder()
               .foo("foo")
               .barList(List.of("bar1", "bar2"))
