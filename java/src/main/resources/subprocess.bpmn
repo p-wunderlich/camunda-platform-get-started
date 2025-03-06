@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_00ufx4t" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.31.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
+  <bpmn:process id="subprocess" name="subprocess" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_043o8tl</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_043o8tl" sourceRef="StartEvent_1" targetRef="Activity_subprocessUserTaskId" />
+    <bpmn:userTask id="Activity_subprocessUserTaskId" name="Subprocess Usertask">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:assignmentDefinition candidateGroups="=[&#34;holisticon3-&#34;+string(floor(random number()*100))+&#34;, camunda-&#34;+string(floor(random number()*100))]" candidateUsers="=[&#34;bud3-&#34;+string(floor(random number()*100))+&#34;, terrence-&#34;+string(floor(random number()*100))]" />
+        <zeebe:priorityDefinition priority="=floor(random number()*100)" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;subprocesss-user-task-variable-&#34;+string(floor(random number()*100))" target="subprocessUserTaskVariable" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_043o8tl</bpmn:incoming>
+      <bpmn:outgoing>Flow_1x9yw23</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_023gv5j">
+      <bpmn:incoming>Flow_1x9yw23</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1x9yw23" sourceRef="Activity_subprocessUserTaskId" targetRef="Event_023gv5j" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="subprocess">
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="182" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1fbyxbf_di" bpmnElement="Activity_subprocessUserTaskId">
+        <dc:Bounds x="270" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_023gv5j_di" bpmnElement="Event_023gv5j">
+        <dc:Bounds x="422" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_043o8tl_di" bpmnElement="Flow_043o8tl">
+        <di:waypoint x="218" y="120" />
+        <di:waypoint x="270" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1x9yw23_di" bpmnElement="Flow_1x9yw23">
+        <di:waypoint x="370" y="120" />
+        <di:waypoint x="422" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

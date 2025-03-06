@@ -25,7 +25,9 @@ public class DeployAndStartInstance {
   public static void main(String[] args) {
     try (ZeebeClient client = ZeebeClientFactory.getZeebeClient()) {
       client.newDeployResourceCommand()
+          .addResourceFromClasspath("subprocess.bpmn")
           .addResourceFromClasspath("send-email.bpmn")
+          .addResourceFromClasspath("test-form.form")
           .send()
           .join();
 
@@ -47,6 +49,12 @@ public class DeployAndStartInstance {
               .barList(List.of("bar1", "bar2"))
               .fooNum(123L)
               .build())
+      );
+      variables.put("object_val",MyJsonObject.builder()
+              .foo("foo")
+              .barList(List.of("bar1", "bar2"))
+              .fooNum(123L)
+              .build()
       );
 
       final var processStartedEvent = client.newCreateInstanceCommand()

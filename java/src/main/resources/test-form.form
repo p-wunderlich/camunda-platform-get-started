@@ -22,7 +22,7 @@
     }
   ],
   "type": "default",
-  "id": "testForm",
+  "id": "camundaExternalFormId",
   "executionPlatform": "Camunda Cloud",
   "executionPlatformVersion": "8.6.0",
   "versionTag": "1",

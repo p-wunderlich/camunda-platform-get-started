@@ -13,13 +13,15 @@ public class DeployAndStartManyInstances {
 
   private static final Logger LOG = LogManager.getLogger(DeployAndStartManyInstances.class);
 
-  private static final Long START_AMOUNT = 1000L;
+  private static final Long START_AMOUNT = 100L;
 
   public static void main(String[] args) {
     var timeStart = Instant.now();
     try (ZeebeClient client = ZeebeClientFactory.getZeebeClient()) {
       client.newDeployResourceCommand()
+          .addResourceFromClasspath("subprocess.bpmn")
           .addResourceFromClasspath("send-email.bpmn")
+          .addResourceFromClasspath("test-form.form")
           .send()
           .join();
 
