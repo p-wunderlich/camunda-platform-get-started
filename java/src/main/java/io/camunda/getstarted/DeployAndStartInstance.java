@@ -18,6 +18,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.awaitility.Awaitility;
 
+import static io.camunda.getstarted.ZeebeHelper.getRandomVariableMap;
+import static io.camunda.getstarted.ZeebeHelper.startProcess;
+
 public class DeployAndStartInstance {
 
   private static final Logger LOG = LogManager.getLogger(DeployAndStartInstance.class);
@@ -27,86 +30,28 @@ public class DeployAndStartInstance {
       client.newDeployResourceCommand()
           .addResourceFromClasspath("subprocess.bpmn")
           .addResourceFromClasspath("send-email.bpmn")
+          .addResourceFromClasspath("simpleTask.bpmn")
+          .addResourceFromClasspath("simpleTask2.bpmn")
           .addResourceFromClasspath("test-form.form")
           .send()
           .join();
 
-      final var objectMapper = new ObjectMapper();
+      final var variables = getRandomVariableMap();
 
-      final var variables = new HashMap<>();
-      variables.put("message_content", "Hello from the Java get started");
-      variables.put("number_val", 12345678);
-      variables.put("double_val", 1234.5678);
-      variables.put("number_string_val", "12345678");
-      variables.put("double_string_val", "1234.5678");
-      variables.put("null_val", null);
-      variables.put("bool_val", true);
-      variables.put("bool_string_val", "true");
-      variables.put("list_val", List.of("list1", "list2"));
-      variables.put("map_val", Map.of("key1", "value1", "key2", "value2"));
-      variables.put("json_val", objectMapper.valueToTree(MyJsonObject.builder()
-              .foo("foo")
-              .barList(List.of("bar1", "bar2"))
-              .fooNum(123L)
-              .build())
-      );
-      variables.put("object_val",MyJsonObject.builder()
-              .foo("foo")
-              .barList(List.of("bar1", "bar2"))
-              .fooNum(123L)
-              .build()
-      );
-
-      final var processStartedEvent = client.newCreateInstanceCommand()
-          .bpmnProcessId("send-email")
-          .latestVersion()
-          .variables(variables)
-          .send()
-          .join();
-
-      LOG.info(
-              "Started instance for processDefinitionKey='{}', bpmnProcessId='{}', version='{}' with processInstanceKey='{}'",
-              processStartedEvent.getProcessDefinitionKey(), processStartedEvent.getBpmnProcessId(), processStartedEvent.getVersion(),
-              processStartedEvent.getProcessInstanceKey());
+      startProcess(client, variables, "simpleTask");
+      final var processStartedEvent = startProcess(client, variables, "send-email");
 
       client.newSetVariablesCommand(processStartedEvent.getProcessInstanceKey())
               .variables(Map.of("message_content", "Hello from the Java get started, with new value"))
               .send()
               .join();
 
-      /** Not working at the moment, need to investigate
-       *
-       * Caused by: com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException: Unrecognized field "userTaskKey" (class io.camunda.zeebe.client.protocol.rest.UserTaskItem), not marked as ignorable (20 known properties: "dueDate", "priority", "completionDate", "creationDate", "elementInstanceKey", "assignee", "state", "customHeaders", "processDefinitionVersion", "elementId", "followUpDate", "processInstanceKey", "candidateGroup", "processDefinitionId", "key", "candidateUser", "formKey", "processDefinitionKey", "tenantIds", "externalFormReference"])
-       *  at [Source: UNKNOWN; byte offset: #UNKNOWN] (through reference chain: io.camunda.zeebe.client.protocol.rest.UserTaskSearchQueryResponse["items"]->java.util.ArrayList[0]->io.camunda.zeebe.client.protocol.rest.UserTaskItem["userTaskKey"])
-       * 	at com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException.from(UnrecognizedPropertyException.java:61)
-       *
-       * Awaitility.await()
-          .pollInterval(Duration.ofSeconds(5))
-          .timeout(Duration.ofSeconds(30))
-          .until(() -> {
-                    var items = client.newUserTaskQuery()
-                            .filter(f -> f.processInstanceKey(processStartedEvent.getProcessInstanceKey()))
-                            .send()
-                            .join()
-                            .items();
-                    return !items.isEmpty();
-                  }
-          );
-      SearchQueryResponse<UserTask> userTask = client.newUserTaskQuery().filter(userTaskFilter -> userTaskFilter.processInstanceKey(processStartedEvent.getProcessInstanceKey())).send().join();
-
-      userTask.items().forEach(task -> {
-        LOG.info("Update user task with key='{}'", task.getKey());
-        client.newUserTaskUpdateCommand(task.getKey())
-                .candidateGroups(List.of("updatedGroup-"+new Random().nextInt(100)+1, "updatedGroup2-"+new Random().nextInt(100)+1))
-                .candidateUsers(List.of("updatedUser-"+new Random().nextInt(100)+1, "updatedUser2-"+new Random().nextInt(100)+1))
-                .send()
-                .join();
-      }); **/
-
       LOG.info("Update variable in instance for processInstanceKey='{}'", processStartedEvent.getProcessInstanceKey());
 
     }
   }
+
+
 
   @Data
   @Builder
