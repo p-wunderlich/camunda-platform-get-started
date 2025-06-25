@@ -16,7 +16,7 @@ public class DeployAndStartManyInstances {
 
   private static final Logger LOG = LogManager.getLogger(DeployAndStartManyInstances.class);
 
-  private static final Long START_AMOUNT = 20L;
+  private static final Long START_AMOUNT = 100000L;
 
   public static void main(String[] args) {
     var timeStart = Instant.now();
@@ -26,6 +26,7 @@ public class DeployAndStartManyInstances {
           .addResourceFromClasspath("send-email.bpmn")
           .addResourceFromClasspath("simpleTask.bpmn")
           .addResourceFromClasspath("simpleTask2.bpmn")
+          .addResourceFromClasspath("simpleIncident.bpmn")
           .addResourceFromClasspath("test-form.form")
           .addResourceFromClasspath("service_tasks_v1.bpmn")
           .send()
@@ -36,6 +37,7 @@ public class DeployAndStartManyInstances {
 
         startProcess(client, variables, "service_tasks_v1");
         startProcess(client, variables, "simpleTask");
+        startProcess(client, variables, "simpleIncident");
         final var processStartedEvent = startProcess(client, variables, "send-email");
 
         final var setVariablesResponse = client.newSetVariablesCommand(processStartedEvent.getProcessInstanceKey())
